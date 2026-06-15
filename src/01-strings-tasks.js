@@ -199,8 +199,47 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+
+// function getRectangleString(width, height) {
+//   const startLine = new Array()
+//     .of(width)
+//     .fill('─')
+//     .splice(0, 1, '┌')
+//     .splice(-1, 1, '┐\n');
+//   const middleLine = new Array()
+//     .of(width)
+//     .of(width)
+//     .fill(' ')
+//     .splice(0, 1, '│')
+//     .splice(-1, 1, '│\n');
+//   const endLine = new Array()
+//     .of(width)
+//     .fill('─')
+//     .splice(0, 1, '└')
+//     .splice(-1, 1, '┘\n');
+//   const resultArray = new Array().of(height).map((elm, i, array) => {
+//     let result = '';
+//     if (i === 0) result = startLine;
+//     else if (i === array.length - 1) result = endLine;
+//     else result = middleLine;
+//     return result;
+//   });
+//   return resultArray;
+// }
+
+function getRectangleString(width, height) {
+  const nonMiddleLinesQuantity = 2;
+
+  const edgeFillers = '─'.repeat(width - nonMiddleLinesQuantity);
+  const middleFillers = ' '.repeat(width - nonMiddleLinesQuantity);
+
+  const topLine = `┌${edgeFillers}┐\n`;
+  const middleLine = `│${middleFillers}│\n`;
+  const bottomLine = `└${edgeFillers}┘\n`;
+
+  const allMiddleLines = middleLine.repeat(height - nonMiddleLinesQuantity);
+
+  return `${topLine}${allMiddleLines}${bottomLine}`;
 }
 
 /**
@@ -219,8 +258,23 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const abc = [...Array(26)].map((_, i) => String.fromCharCode(i + 97));
+  const repeatedAbc = [...abc, ...abc];
+  const shiftNum = 13;
+  return str
+    .split('')
+    .map((char) => {
+      const charIndex = repeatedAbc.indexOf(char.toLowerCase());
+      if (charIndex === -1) return char;
+
+      const newSymbol = repeatedAbc[charIndex + shiftNum];
+      const isLowerCase = char === char.toLowerCase();
+
+      if (isLowerCase) return newSymbol;
+      return newSymbol.toUpperCase();
+    })
+    .join('');
 }
 
 /**
@@ -236,8 +290,8 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  return typeof value === 'string' || value instanceof String;
 }
 
 /**
@@ -264,8 +318,53 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+
+// function getCardId(value) {
+//   const cardsBase = [
+//     'A',
+//     '2',
+//     '3',
+//     '4',
+//     '5',
+//     '6',
+//     '7',
+//     '8',
+//     '9',
+//     '10',
+//     'J',
+//     'Q',
+//     'K',
+//   ];
+//   const suits = ['♣', '♦', '♥', '♠'];
+//   const cards = [];
+//   for (const suit of suits) {
+//     for (const base of cardsBase) {
+//       cards.push(`${base}${suit}`);
+//     }
+//   }
+//   return cards.indexOf(value);
+// }
+
+function getCardId(value) {
+  const ranks = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+  const suits = ['♣', '♦', '♥', '♠'];
+  const suit = value.slice(-1);
+  const rank = value.slice(0, -1);
+  return suits.indexOf(suit) * ranks.length + ranks.indexOf(rank);
 }
 
 module.exports = {
